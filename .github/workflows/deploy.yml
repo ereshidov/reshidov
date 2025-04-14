@@ -23,3 +23,12 @@ jobs:
           extended: true
       - name: Build
         run: hugo --minify
+      - name: Copy build result to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./public"
+          target: "./blog"
+          overwrite: true
