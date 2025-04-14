@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--providers.docker"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=ereshidov.dev@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - traefik
+    container_name: traefik
+  static-server:
+    image: nginx:alpine
+    container_name: blog-static
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.rule=Host(`reshidov.duckdns.org`)"
+      - "traefik.http.routers.blog.entrypoints=web"
+      - "traefik.http.routers.blog.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+
+      - "traefik.http.routers.blog-https.rule=Host(`reshidov.duckdns.org`)"
+      - "traefik.http.routers.blog-https.entrypoints=websecure"
+      - "traefik.http.routers.blog-https.tls.certresolver=myresolver"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
