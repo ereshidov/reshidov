@@ -1,4 +1,5 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://reshidov.duckdns.org'
+
 languageCode = 'ru-RU'
 defaultContentLanguage = "ru-RU"
 title = 'Reshidov Blog'

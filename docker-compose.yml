@@ -1,11 +1,24 @@
 version: "3.8"
 
 services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--providers.docker"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
+    container_name: traefik
   static-server:
     image: nginx:alpine
     container_name: blog-static
     volumes:
-      - /blog/public:/usr/share/nginx/html:ro
+      - ./public:/usr/share/nginx/html:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.blog.rule=Host(`reshidov.duckdns.org`)"
