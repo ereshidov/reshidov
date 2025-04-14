@@ -29,6 +29,6 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./public"
+          source: "./public,./docker-compose.yml"
           target: "./blog"
           overwrite: true

@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  static-server:
+    image: nginx:alpine
+    container_name: blog-static
+    volumes:
+      - /blog/public:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.rule=Host(`reshidov.duckdns.org`)"
+      - "traefik.http.routers.blog.entrypoints=web"
+      - "traefik.http.services.blog.loadbalancer.server.port=80"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
